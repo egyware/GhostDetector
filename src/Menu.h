@@ -1,9 +1,16 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
+#include <string.h>
+
+class Menu;
+
+typedef void (*Action)(void *arg);
+
 struct NavMenu
 {
-
+    char name[8];      
+    Action action;
 };
 
 class Menu
@@ -17,6 +24,8 @@ class Menu
         void okPress();
         void leftPress();
         void rightPress();
+
+        void drawNavMenu();
         
         //funciones internas
         virtual void _okPress() = 0;
@@ -26,18 +35,18 @@ class Menu
         inline void okLongPress()
         {
             navMenuIndex = 0;
-            navMenu = !navMenu;
+            selectedNavMenu = !selectedNavMenu;
         }
 
         inline const bool isDone() const { return done; }
-        inline const bool isNavMenu() const { return navMenu; }
-    protected:
-        bool done;        
+        inline const bool isSelectedNavMenu() const { return selectedNavMenu; }
+        inline void registerNavMenu(const unsigned int index, const char* name, const Action action) { navMenus[index].action = action; strcpy(navMenus[index].name, name); }
+    protected:        
         int navMenuIndex;
-    private:
-        bool navMenu;        
-        
-        
+        bool done;
+    private:        
+        NavMenu navMenus[2];        
+        bool selectedNavMenu;
 };
 
 #endif

@@ -4,6 +4,8 @@
 
 LedMenu::LedMenu():barMode(0),barValue(0), currentIndex(0)
 {
+    registerNavMenu(0,    "Ok", &LedMenu::  okAction);
+    registerNavMenu(1, "Atras", &LedMenu::backAction);
 }
 
 void LedMenu::init()
@@ -42,25 +44,7 @@ void LedMenu::run()
             lcd.drawRect(4+i*8, 26, 4, 8, BLACK);
         }
     }
-    if(isNavMenu())
-    {
-        switch(navMenuIndex)
-        {
-            case 0:
-            lcd.fillRect(5, 38, 35, 10, BLACK); lcd.setCursor(11, 40); lcd.setTextColor(WHITE); lcd.print("Ok");
-            lcd.drawRect(44,38, 35, 10, BLACK); lcd.setCursor(47, 40); lcd.setTextColor(BLACK); lcd.print("Atras");
-            break;
-            case 1:
-            lcd.drawRect(5, 38, 35, 10, BLACK); lcd.setCursor(11, 40); lcd.setTextColor(BLACK); lcd.print("Ok");
-            lcd.fillRect(44,38, 35, 10, BLACK); lcd.setCursor(47, 40); lcd.setTextColor(WHITE); lcd.print("Atras");
-            break;
-        }
-    }
-    else
-    {
-        lcd.drawRect(5, 38, 35, 10, BLACK); lcd.setCursor(11, 40); lcd.print("Ok");
-        lcd.drawRect(44,38, 35, 10, BLACK); lcd.setCursor(47, 40); lcd.print("Atras");
-    }
+    drawNavMenu();
     lcd.display();    
 }
 void LedMenu::end()
@@ -94,4 +78,14 @@ void LedMenu::_okPress()
         pinMode(3, OUTPUT); digitalWrite(3, HIGH);
         pinMode(4, OUTPUT); digitalWrite(4, HIGH);
     }
+}
+
+void LedMenu::okAction(void *arg)
+{
+    //LedMenu *ledMenu = static_cast<LedMenu*>(arg);
+}
+
+void LedMenu::backAction(void *arg)
+{
+    //LedMenu *ledMenu = static_cast<LedMenu*>(arg);
 }

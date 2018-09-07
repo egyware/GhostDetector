@@ -17,7 +17,10 @@ class LedMenu: public Menu
     private:
         int barMode;
         int barValue;
-        int currentIndex;                
+        int currentIndex;     
+
+        static void   okAction(void *arg);
+        static void backAction(void *arg);
 };
 
 #endif
