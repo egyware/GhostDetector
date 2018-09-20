@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-//#include <PCD8544.h>
+#include <TimerOne.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include <OneButton.h>
@@ -9,6 +9,8 @@
 #include "PowerOnMenu.h"
 #include "MainMenu.h"
 #include "LedMenu.h"
+#include "Main.h"
+
 
 #define SCLK 13
 #define DIN 12
@@ -24,7 +26,9 @@ OneButton rightButton(A0, true);
 OneButton  leftButton(A2, true);
 OneButton    okButton(A1, true);
 
-int ledValues[10] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+int ledValues[10] = {17, 34, 51, 68, 85, 102, 119, 136, 153, 170};
+volatile int data[DATA_LEN]; //este arreglo almacenará los datos en bruto del sensor analogo
+volatile int dataIndex = -1;
 
 PowerOnMenu powerOnMenu;
 MainMenu mainMenu;
@@ -32,6 +36,11 @@ LedMenu ledMenu;
 StackArray<Menu*, 4> menuState;
 Menu* currentMenu = NULL;
 
+void captureSensorData()
+{  
+  dataIndex = (dataIndex + 1) % DATA_LEN;
+  data[dataIndex] = analogRead(A3);  
+}
 
 void leftPress()
 {
@@ -61,12 +70,18 @@ void setup()
   lcd.setContrast(60);
 
   //pusheamos el menu de encendido para que haga toda la challa
-  menuState.push(&ledMenu);
+  menuState.push(&mainMenu);
 
   leftButton.attachClick(leftPress);
   rightButton.attachClick(rightPress);
   okButton.attachClick(okPress);
   okButton.attachLongPressStart(okLongPress);
+
+  // captura de datos
+  memset(&data, 0, sizeof(data));
+  dataIndex = 0;
+  Timer1.initialize(1000000);
+  Timer1.attachInterrupt(captureSensorData);
 }
 
 void loop()

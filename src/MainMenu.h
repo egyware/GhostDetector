@@ -12,7 +12,7 @@ class MainMenu: public Menu
         
         void init();
         void run();
-        void end();
+        void end();    
 };
 
 #endif

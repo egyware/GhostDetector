@@ -6,6 +6,9 @@
 #include <StackArray.h>
 #include <OneButton.h>
 
+#define DATA_LEN 16
+#define GRAPH_WIDTH 84/(DATA_LEN-1)
+
 class Menu;
 class PowerOnMenu;
 class MainMenu;
@@ -22,6 +25,8 @@ extern PowerOnMenu powerOnMenu;
 extern MainMenu mainMenu;
 extern LedMenu ledMenu;
 
-extern int ledValues[10];
+extern int ledValues[10];        
+extern volatile int data[DATA_LEN];
+extern volatile int dataIndex;
 
 #endif
