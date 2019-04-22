@@ -9,6 +9,7 @@
 #include "PowerOnMenu.h"
 #include "MainMenu.h"
 #include "LedMenu.h"
+#include "ExplorerMenu.h"
 #include "Main.h"
 
 
@@ -26,13 +27,14 @@ OneButton rightButton(A0, true);
 OneButton  leftButton(A2, true);
 OneButton    okButton(A1, true);
 
-int ledValues[10] = {17, 34, 51, 68, 85, 102, 119, 136, 153, 170};
+unsigned int ledValues[10] = {17, 34, 51, 68, 85, 102, 119, 136, 153, 170};
 volatile int data[DATA_LEN]; //este arreglo almacenará los datos en bruto del sensor analogo
 volatile int dataIndex = -1;
 
 PowerOnMenu powerOnMenu;
 MainMenu mainMenu;
 LedMenu ledMenu;
+ExplorerMenu explorerMenu;
 StackArray<Menu*, 4> menuState;
 Menu* currentMenu = NULL;
 
@@ -70,7 +72,7 @@ void setup()
   lcd.setContrast(60);
 
   //pusheamos el menu de encendido para que haga toda la challa
-  menuState.push(&mainMenu);
+  menuState.push(&ledMenu);
 
   leftButton.attachClick(leftPress);
   rightButton.attachClick(rightPress);

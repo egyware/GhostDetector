@@ -15,7 +15,7 @@ void MainMenu::run()
     
     for(int i = 1; i < DATA_LEN && i <= _dataIndex; i++)
     {   
-        lcd.drawLine((i-1) * GRAPH_WIDTH, (data[i-1]*48)/1024 , i * GRAPH_WIDTH, (data[i]*48)/1024, BLACK);
+        lcd.drawLine((i-1) * GRAPH_WIDTH, (data[i-1]*48)/1024 , i * GRAPH_WIDTH, (data[i]*48)/1024, BLACK);        
     }    
     lcd.drawLine(_dataIndex * GRAPH_WIDTH, 0, _dataIndex * GRAPH_WIDTH, 36, BLACK);
     lcd.drawPixel(_dataIndex * GRAPH_WIDTH, (data[_dataIndex]*48)/1024, WHITE);    

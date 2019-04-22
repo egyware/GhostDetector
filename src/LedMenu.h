@@ -1,9 +1,9 @@
 #ifndef __LED_MENU_H__
 #define __LED_MENU_H__
 
-#include "Menu.h"
+#include "NavMenu.h"
 
-class LedMenu: public Menu
+class LedMenu: public NavMenu
 {
     public:
         LedMenu();

@@ -13,6 +13,7 @@ class Menu;
 class PowerOnMenu;
 class MainMenu;
 class LedMenu;
+class ExplorerMenu;
 
 extern Adafruit_PCD8544 lcd;
 
@@ -24,6 +25,7 @@ extern StackArray<Menu*, 4> menuState;
 extern PowerOnMenu powerOnMenu;
 extern MainMenu mainMenu;
 extern LedMenu ledMenu;
+extern ExplorerMenu explorerMenu;
 
 extern int ledValues[10];        
 extern volatile int data[DATA_LEN];
