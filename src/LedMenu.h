@@ -15,9 +15,9 @@ class LedMenu: public NavMenu
         void _leftPress();
         void _rightPress();         
     private:
-        int barMode;
-        int barValue;
-        int currentIndex;     
+        bool barMode;
+        unsigned int barValue;
+        unsigned int currentIndex;     
 
         static void   okAction(void *arg);
         static void backAction(void *arg);

@@ -6,3 +6,4 @@ lib
 .vscode/launch.json
 .vscode/extension.json
 .vscode/settings.json
+.vscode/ipch/*

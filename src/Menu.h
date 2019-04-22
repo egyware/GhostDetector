@@ -1,8 +1,6 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#include <string.h>
-
 class Menu
 {
     public:

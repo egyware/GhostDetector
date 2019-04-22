@@ -1,5 +1,7 @@
 #include "LedMenu.h"
+#include "PIN.h"
 #include "main.h"
+
 
 
 LedMenu::LedMenu():barMode(0),barValue(0), currentIndex(0)
@@ -11,10 +13,10 @@ LedMenu::LedMenu():barMode(0),barValue(0), currentIndex(0)
 void LedMenu::init()
 {  
     done = false;
-    pinMode(3, OUTPUT); digitalWrite(3, HIGH);
-    pinMode(4, OUTPUT); digitalWrite(4, HIGH);
-    analogWrite(5, 0);
-    analogWrite(6, 0);
+    pinMode(LEFT_DOTMODE,  OUTPUT); digitalWrite(LEFT_DOTMODE,  HIGH);
+    pinMode(RIGHT_DOTMODE, OUTPUT); digitalWrite(RIGHT_DOTMODE, HIGH);
+    analogWrite(LEFT_BAR, 0);
+    analogWrite(RIGHT_BAR, 0);
 }
 void LedMenu::run()
 {
@@ -55,28 +57,28 @@ void LedMenu::end()
  {
     barValue += 1;
     if(barValue > 255) barValue = 255;
-    analogWrite(5, barValue);
-    analogWrite(6, barValue);
+    analogWrite(LEFT_BAR,  barValue);
+    analogWrite(RIGHT_BAR, barValue);
  }
 void LedMenu::_rightPress()
 {
     barValue -= 1;
     if(barValue < 0) barValue = 0;
-    analogWrite(5, barValue);
-    analogWrite(6, barValue);
+    analogWrite(LEFT_BAR,  barValue);
+    analogWrite(RIGHT_BAR, barValue);
 }
 void LedMenu::_okPress()
 {
     barMode = !barMode;
     if(barMode)
     {
-        pinMode(3, INPUT);
-        pinMode(4, INPUT);        
+        pinMode(LEFT_DOTMODE,  INPUT);
+        pinMode(RIGHT_DOTMODE, INPUT);        
     }
     else
     {
-        pinMode(3, OUTPUT); digitalWrite(3, HIGH);
-        pinMode(4, OUTPUT); digitalWrite(4, HIGH);
+        pinMode(LEFT_DOTMODE,  OUTPUT); digitalWrite(LEFT_DOTMODE,  HIGH);
+        pinMode(RIGHT_DOTMODE, OUTPUT); digitalWrite(RIGHT_DOTMODE, HIGH);
     }
 }
 

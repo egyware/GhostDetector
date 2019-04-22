@@ -11,21 +11,16 @@
 #include "LedMenu.h"
 #include "ExplorerMenu.h"
 #include "Main.h"
+#include "PIN.h"
 
-
-#define SCLK 13
-#define DIN 12
-#define DC  9
-#define RST 7
-#define CS 8
 
 //PCD8544 lcd(SCLK, DIN, DC, RST, CS);
 //Adafruit_PCD8544 lcd(DC, CS, RST);
-Adafruit_PCD8544 lcd(SCLK, DIN, DC, CS, RST);
+Adafruit_PCD8544 lcd(PIN_SCLK, PIN_DIN, PIN_DC, PIN_CS, PIN_RST);
 
-OneButton rightButton(A0, true);
-OneButton  leftButton(A2, true);
-OneButton    okButton(A1, true);
+OneButton rightButton(PIN_BUTTON_RIGHT, true);
+OneButton  leftButton(PIN_BUTTON_LEFT, true);
+OneButton    okButton(PIN_BUTTON_OK, true);
 
 unsigned int ledValues[10] = {17, 34, 51, 68, 85, 102, 119, 136, 153, 170};
 volatile int data[DATA_LEN]; //este arreglo almacenará los datos en bruto del sensor analogo
@@ -41,7 +36,7 @@ Menu* currentMenu = NULL;
 void captureSensorData()
 {  
   dataIndex = (dataIndex + 1) % DATA_LEN;
-  data[dataIndex] = analogRead(A3);  
+  data[dataIndex] = analogRead(SENSOR_PIN);  
 }
 
 void leftPress()
@@ -63,10 +58,10 @@ void okLongPress()
 
 void setup()
 {
-  pinMode(3, OUTPUT); digitalWrite(3,HIGH);
-  pinMode(4, OUTPUT); digitalWrite(4,HIGH);
-  analogWrite(5, 255);
-  analogWrite(6, 255);
+  pinMode(LEFT_DOTMODE, OUTPUT); digitalWrite(RIGHT_DOTMODE, HIGH);
+  pinMode(RIGHT_DOTMODE, OUTPUT); digitalWrite(RIGHT_DOTMODE, HIGH);
+  analogWrite(LEFT_BAR, 255);
+  analogWrite(RIGHT_BAR, 255);
 
   lcd.begin();
   lcd.setContrast(60);
