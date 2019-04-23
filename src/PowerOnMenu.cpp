@@ -34,12 +34,12 @@ void PowerOnMenu::end()
 }
 
 
-void PowerOnMenu::_leftPress()
+void PowerOnMenu::navSwitchClick(const NavKey key)
 {
 }
-void PowerOnMenu::_rightPress()
+void PowerOnMenu::navSwitchDoubleClick(const NavKey key)
 {
 }
-void PowerOnMenu::_okPress()
-{
+void PowerOnMenu::navSwitchLongPress(const NavKey key)
+{    
 }

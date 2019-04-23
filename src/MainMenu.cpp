@@ -30,12 +30,12 @@ void MainMenu::end()
 }
 
 
-void MainMenu::_leftPress()
+void MainMenu::navSwitchClick(const NavKey key)
 {
 }
-void MainMenu::_rightPress()
+void MainMenu::navSwitchDoubleClick(const NavKey key)
 {
 }
-void MainMenu::_okPress()
-{
+void MainMenu::navSwitchLongPress(const NavKey key)
+{    
 }

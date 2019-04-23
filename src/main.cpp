@@ -23,8 +23,8 @@ OneButton  leftButton(PIN_BUTTON_LEFT, true);
 OneButton    okButton(PIN_BUTTON_OK, true);
 
 unsigned int ledValues[10] = {17, 34, 51, 68, 85, 102, 119, 136, 153, 170};
-volatile int data[DATA_LEN]; //este arreglo almacenará los datos en bruto del sensor analogo
-volatile int dataIndex = -1;
+volatile unsigned int data[DATA_LEN] = {0}; //este arreglo almacenará los datos en bruto del sensor analogo
+volatile unsigned int dataIndex = -1;
 
 PowerOnMenu powerOnMenu;
 MainMenu mainMenu;
@@ -39,21 +39,33 @@ void captureSensorData()
   data[dataIndex] = analogRead(SENSOR_PIN);  
 }
 
-void leftPress()
+void leftClick()
 {
-  if(currentMenu) currentMenu->leftPress();
+  if(currentMenu) currentMenu->navSwitchClick(NavLeft);
 }
-void rightPress()
+void leftDoubleClick()
 {
-  if(currentMenu) currentMenu->rightPress();
+  if(currentMenu) if(currentMenu) currentMenu->navSwitchDoubleClick(NavLeft);
 }
-void okPress()
+void rightClick()
 {
-  if(currentMenu) currentMenu->okPress();
+  if(currentMenu) currentMenu->navSwitchClick(NavRight);
+}
+void rightDoubleClick()
+{
+  if(currentMenu) currentMenu->navSwitchDoubleClick(NavRight);
+}
+void okClick()
+{
+  if(currentMenu) if(currentMenu) currentMenu->navSwitchClick(NavOk);
+}
+void okDoubleClick()
+{
+  if(currentMenu) if(currentMenu) currentMenu->navSwitchDoubleClick(NavOk);
 }
 void okLongPress()
 {
-  if(currentMenu) currentMenu->okLongPress();
+  if(currentMenu) if(currentMenu) currentMenu->navSwitchLongPress(NavOk);
 }
 
 void setup()
@@ -69,13 +81,15 @@ void setup()
   //pusheamos el menu de encendido para que haga toda la challa
   menuState.push(&ledMenu);
 
-  leftButton.attachClick(leftPress);
-  rightButton.attachClick(rightPress);
-  okButton.attachClick(okPress);
+  leftButton.attachClick(leftClick);
+  leftButton.attachDoubleClick(leftDoubleClick);
+  rightButton.attachClick(rightClick);
+  rightButton.attachDoubleClick(rightDoubleClick);
+  okButton.attachClick(okClick);
+  okButton.attachDoubleClick(okDoubleClick);
   okButton.attachLongPressStart(okLongPress);
 
-  // captura de datos
-  memset(&data, 0, sizeof(data));
+  // captura de datos  
   dataIndex = 0;
   Timer1.initialize(1000000);
   Timer1.attachInterrupt(captureSensorData);

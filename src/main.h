@@ -28,7 +28,7 @@ extern LedMenu ledMenu;
 extern ExplorerMenu explorerMenu;
 
 extern unsigned int ledValues[10];        
-extern volatile int data[DATA_LEN];
-extern volatile int dataIndex;
+extern volatile unsigned int data[DATA_LEN];
+extern volatile unsigned int dataIndex;
 
 #endif

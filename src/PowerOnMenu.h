@@ -10,9 +10,9 @@ class PowerOnMenu: public Menu
         void run();
         void end();
 
-        void _okPress();
-        void _leftPress();
-        void _rightPress();        
+        void navSwitchClick(const NavKey);
+        void navSwitchDoubleClick(const NavKey);
+        void navSwitchLongPress(const NavKey);        
 };
 
 #endif

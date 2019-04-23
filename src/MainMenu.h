@@ -6,9 +6,9 @@
 class MainMenu: public Menu
 {
     public:
-        void _okPress();
-        void _leftPress();
-        void _rightPress();        
+        void navSwitchClick(const NavKey key);
+        void navSwitchDoubleClick(const NavKey key);
+        void navSwitchLongPress(const NavKey key);
         
         void init();
         void run();

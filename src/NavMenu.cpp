@@ -8,45 +8,57 @@ NavMenu::NavMenu(): navMenuIndex(0), navMenus(), selectedNavMenu(false)
     memset(&navMenus, 0, sizeof(navMenus));
 }
 
-void NavMenu::leftPress()
+void NavMenu::navSwitchClick(const NavKey navKey)
 {
     if(selectedNavMenu)
     {
-        navMenuIndex +=1;    
-        if(navMenuIndex > 1) navMenuIndex = 1;
-    }
-    else
-    {
-        _leftPress();
-    }
-}
-
-void NavMenu::rightPress()
-{
-    if(selectedNavMenu)
-    {
-        navMenuIndex -=1;
-        if(navMenuIndex < 0) navMenuIndex = 0;
-    }
-    else
-    {
-        _rightPress();
-    }
-}
-
-void NavMenu::okPress()
-{
-    if(selectedNavMenu)
-    {
-        NavMenuItem &navMenu = navMenus[navMenuIndex];
-        if(navMenu.action != nullptr) 
+        switch(navKey)
         {
-            navMenu.action(this);
-        }        
+          case NavLeft:
+            navMenuIndex +=1;    
+            if(navMenuIndex > 1) navMenuIndex = 1;
+          break;
+          case NavRight:
+            navMenuIndex -=1;
+            if(navMenuIndex < 0) navMenuIndex = 0;
+          break;
+          case NavOk:
+            NavMenuItem &navMenu = navMenus[navMenuIndex];
+            if(navMenu.action != nullptr) 
+            {
+                navMenu.action(this);
+            } 
+          break;  
+        };
+        
     }
     else
     {
-        _okPress();
+        switch(navKey)
+        {
+          case NavLeft:
+            _leftPress();
+          break;
+          case NavRight:
+            _rightPress();
+          break;
+          case NavOk:
+           _okPress();
+          break;  
+        };        
+    }
+}
+
+void NavMenu::navSwitchDoubleClick(const NavKey navKey)
+{
+}
+
+void NavMenu::navSwitchLongPress(const NavKey navKey)
+{
+    if(NavOk == navKey)
+    {
+        navMenuIndex = 0;
+        selectedNavMenu = !selectedNavMenu;
     }
 }
 

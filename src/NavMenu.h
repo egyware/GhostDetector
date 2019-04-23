@@ -20,10 +20,10 @@ class NavMenu : public  Menu
         virtual void run() = 0;
         virtual void end() = 0;
 
-        void okPress();
-        void leftPress();
-        void rightPress();
-
+        void navSwitchClick(const NavKey);
+        void navSwitchDoubleClick(const NavKey);
+        void navSwitchLongPress(const NavKey);
+         
         void drawNavMenu();
         
         //funciones internas
@@ -31,12 +31,6 @@ class NavMenu : public  Menu
         virtual void _leftPress() = 0;
         virtual void _rightPress() = 0;
         
-        void okLongPress()
-        {
-            navMenuIndex = 0;
-            selectedNavMenu = !selectedNavMenu;
-        }
-
         inline const bool isDone() const { return done; }
         inline const bool isSelectedNavMenu() const { return selectedNavMenu; }
         inline void registerNavMenu(const unsigned int index, const char* name, const Action action) { navMenus[index].action = action; strcpy(navMenus[index].name, name); }
