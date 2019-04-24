@@ -24,7 +24,7 @@ OneButton    okButton(PIN_BUTTON_OK, true);
 
 unsigned int ledValues[10] = {17, 34, 51, 68, 85, 102, 119, 136, 153, 170};
 volatile unsigned int data[DATA_LEN] = {0}; //este arreglo almacenará los datos en bruto del sensor analogo
-volatile unsigned int dataIndex = -1;
+volatile unsigned int dataIndex = DATA_LEN + DATA_LEN - 1; //se inicializa en este indice para indicar que no hay datos
 
 PowerOnMenu powerOnMenu;
 MainMenu mainMenu;

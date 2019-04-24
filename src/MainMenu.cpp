@@ -8,8 +8,8 @@ void MainMenu::init()
 void MainMenu::run()
 {    
     //lcd.clearDisplay();      
-    if(dataIndex == -1)  return;
-    int _dataIndex = dataIndex;
+    if(dataIndex >= DATA_LEN) return; //fuera de los limites
+    unsigned int _dataIndex = dataIndex;
     
     lcd.fillRect(0,0, _dataIndex * GRAPH_WIDTH,37, WHITE);
     
