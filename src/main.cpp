@@ -13,6 +13,27 @@
 #include "Main.h"
 #include "PIN.h"
 
+//Constantes
+//este codigo ha sido sacado desde aqui https://www.hackster.io/karimmufte/arduino-and-mq2-gas-sensor-57f98c
+//lo he cortado y desmenuzado para mi propio beneficio
+
+// Variables globales para obtener las concentraciones
+//asumo que estos puntos corresponden a temperatura ambiente
+const float     LPGCurve[3]  =  {2.3,0.21,-0.47};   //two points are taken from the curve. 
+                                                    //with these two points, a line is formed which is "approximately equivalent"
+                                                    //to the original curve. 
+                                                    //data format:{ x, y, slope}; point1: (lg200, 0.21), point2: (lg10000, -0.59) 
+const float     COCurve[3]  =  {2.3,0.72,-0.34};    //two points are taken from the curve. 
+                                                    //with these two points, a line is formed which is "approximately equivalent" 
+                                                    //to the original curve.
+                                                    //data format:{ x, y, slope}; point1: (lg200, 0.72), point2: (lg10000,  0.15) 
+const float     SmokeCurve[3] ={2.3,0.53,-0.44};    //two points are taken from the curve. 
+                                                    //with these two points, a line is formed which is "approximately equivalent" 
+                                                    //to the original curve.
+                                                    //data format:{ x, y, slope}; point1: (lg200, 0.53), point2: (lg10000,  -0.22)                                                     
+float           Ro           =  10;                 //Ro is initialized to 10 kilo ohms
+ 
+
 
 //PCD8544 lcd(SCLK, DIN, DC, RST, CS);
 //Adafruit_PCD8544 lcd(DC, CS, RST);
