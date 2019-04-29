@@ -58,6 +58,39 @@ Remarks: The sensor and the load resistor forms a voltage divider. Given the vol
 inline float MQResistanceCalculation(int raw_adc)
 {
   return RL_VALUE*(1023-raw_adc)/(float)raw_adc;
+   //return ( ((float)RL_VALUE*(1023-raw_adc)/raw_adc)); //original
+}
+
+
+/***************************  MQGetPercentage ********************************
+Input:   rs_ro_ratio - Rs divided by Ro
+         pcurve      - pointer to the curve of the target gas
+Output:  ppm of the target gas
+Remarks: By using the slope and a point of the line. The x(logarithmic value of ppm) 
+         of the line could be derived if y(rs_ro_ratio) is provided. As it is a 
+         logarithmic coordinate, power of 10 is used to convert the result to non-logarithmic 
+         value.
+**********************************************************************************/ 
+inline int MQGetPercentage(float rs_ro_ratio, const float *pcurve)
+{
+  return (pow(10,( ((log(rs_ro_ratio)-pcurve[1])/pcurve[2]) + pcurve[0])));  
+}
+
+
+/***************************  MQRead *******************************************
+Input:   mq_pin - analog channel
+Output:  Rs of the sensor
+Remarks: This function use MQResistanceCalculation to caculate the sensor resistenc (Rs).
+         The Rs changes as the sensor is in the different consentration of the target
+         gas. The sample times and the time interval between samples could be configured
+         by changing the definition of the macros.
+**********************************************************************************/ 
+inline float MQRead()
+{
+  //ahora solo devuelve el valor inmediato, no el promedio
+  unsigned int _dataIndex = dataIndex;
+  if(_dataIndex >= DATA_LEN) return -1; //fuera de los limites
+  return MQResistanceCalculation(data[_dataIndex]);  
 }
 
 #endif

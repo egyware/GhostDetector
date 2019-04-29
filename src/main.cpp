@@ -91,7 +91,7 @@ void okLongPress()
 
 void setup()
 {
-  pinMode(LEFT_DOTMODE, OUTPUT); digitalWrite(RIGHT_DOTMODE, HIGH);
+  pinMode(LEFT_DOTMODE, OUTPUT); digitalWrite(LEFT_DOTMODE, HIGH);
   pinMode(RIGHT_DOTMODE, OUTPUT); digitalWrite(RIGHT_DOTMODE, HIGH);
   analogWrite(LEFT_BAR, 255);
   analogWrite(RIGHT_BAR, 255);
@@ -100,7 +100,8 @@ void setup()
   lcd.setContrast(60);
 
   //pusheamos el menu de encendido para que haga toda la challa
-  menuState.push(&ledMenu);
+  //menuState.push(&ledMenu);
+  menuState.push(&mainMenu);
 
   leftButton.attachClick(leftClick);
   leftButton.attachDoubleClick(leftDoubleClick);
