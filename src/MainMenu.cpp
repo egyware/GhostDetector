@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include "main.h"
+#include "PIN.h"
 
 // void setup()
 // {
@@ -42,10 +43,22 @@ float MQCalibration(int mq_pin)
 void MainMenu::init()
 {
     lcd.clearDisplay();
-    Ro = MQCalibration(A3);      
+    Ro = MQCalibration(A3);  
+
+    pinMode(LEFT_DOTMODE,  INPUT); 
+    pinMode(RIGHT_DOTMODE, INPUT); 
 }
 void MainMenu::run()
 {    
+  static int barValue = 0;
+  static int dir = 1;
+  if(barValue > 180) { barValue = 180; dir = -1; }
+  if(barValue < 0) { barValue = 0; dir = 1; }
+  analogWrite(LEFT_BAR,  barValue);
+  analogWrite(RIGHT_BAR, barValue);
+  delay(5);  
+  barValue+=dir;
+
 //       Serial.print("LPG:"); 
 //    Serial.print(MQGetGasPercentage(MQRead(MQ_PIN)/Ro,LPGCurve );
 //    Serial.print( "ppm" );
@@ -77,26 +90,24 @@ void MainMenu::run()
     //lcd.clearDisplay();      
     if(dataIndex >= DATA_LEN) return; //fuera de los limites
     unsigned int _dataIndex = dataIndex;
+
+    //sección superior iconos
+    lcd.fillRect(0, 0, 84, 6, BLACK);
     
-    lcd.fillRect(0,0, _dataIndex * GRAPH_WIDTH,37, WHITE);
+    //
+    lcd.fillRect(0,6, _dataIndex * GRAPH_WIDTH,37, WHITE);
     
     for(unsigned int i = 1; i < DATA_LEN && i <= _dataIndex; i++)
     {   
-        lcd.drawLine((i-1) * GRAPH_WIDTH, (data[i-1]*48)/1024 , i * GRAPH_WIDTH, (data[i]*48)/1024, BLACK);        
+        lcd.drawLine((i-1) * GRAPH_WIDTH, 6+(data[i-1]*42)/1024 , i * GRAPH_WIDTH, 6+(data[i]*42)/1024, BLACK);        
     }    
-    lcd.drawLine(_dataIndex * GRAPH_WIDTH, 0, _dataIndex * GRAPH_WIDTH, 36, BLACK);
-    lcd.drawPixel(_dataIndex * GRAPH_WIDTH, (data[_dataIndex]*48)/1024, WHITE);    
+    lcd.drawLine(_dataIndex * GRAPH_WIDTH,  6, _dataIndex * GRAPH_WIDTH, 36, BLACK);
+    lcd.drawPixel(_dataIndex * GRAPH_WIDTH, 6+(data[_dataIndex]*42)/1024, WHITE);    
 
-    lcd.fillRect(0, 37, 84, 11, BLACK);    
+    
+    lcd.fillRect(0, 37, 84, 11, BLACK);
     lcd.setTextColor(WHITE);
-    //lcd.setCursor(30,38);  //lcd.print("GHOST");    
-    lcd.setTextColor(BLACK);
-    lcd.setCursor(0, 20);
-    lcd.print(Ro);
-    lcd.print(',');
-    lcd.print(MQRead());
-    lcd.print(',');
-    lcd.print(MQRead()/Ro);
+    //lcd.setCursor(30,38);  //lcd.print("GHOST");
     lcd.setTextColor(WHITE);
     lcd.setCursor(0,38);  
     lcd.print(MQGetPercentage(MQRead()/Ro, LPGCurve));

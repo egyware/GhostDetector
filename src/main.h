@@ -57,8 +57,7 @@ Remarks: The sensor and the load resistor forms a voltage divider. Given the vol
 **********************************************************************************/
 inline float MQResistanceCalculation(int raw_adc)
 {
-  return RL_VALUE*(1023-raw_adc)/(float)raw_adc;
-   //return ( ((float)RL_VALUE*(1023-raw_adc)/raw_adc)); //original
+  return RL_VALUE*(1023-raw_adc)/(float)raw_adc;   
 }
 
 
@@ -71,7 +70,7 @@ Remarks: By using the slope and a point of the line. The x(logarithmic value of 
          logarithmic coordinate, power of 10 is used to convert the result to non-logarithmic 
          value.
 **********************************************************************************/ 
-inline int MQGetPercentage(float rs_ro_ratio, const float *pcurve)
+inline double MQGetPercentage(float rs_ro_ratio, const float *pcurve)
 {
   return (pow(10,( ((log(rs_ro_ratio)-pcurve[1])/pcurve[2]) + pcurve[0])));  
 }
