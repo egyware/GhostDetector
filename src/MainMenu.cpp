@@ -59,65 +59,68 @@ void MainMenu::run()
   delay(5);  
   barValue+=dir;
 
-//       Serial.print("LPG:"); 
-//    Serial.print(MQGetGasPercentage(MQRead(MQ_PIN)/Ro,LPGCurve );
-//    Serial.print( "ppm" );
-//    Serial.print("    ");   
-//    Serial.print("CO:"); 
-//    Serial.print(MQGetGasPercentage(MQRead(MQ_PIN)/Ro,GAS_CO) );
-//    Serial.print( "ppm" );
-//    Serial.print("    ");   
-//    Serial.print("SMOKE:"); 
-//    Serial.print(MQGetGasPercentage(MQRead(MQ_PIN)/Ro,GAS_SMOKE) );
-//    Serial.print( "ppm" );
-//    Serial.print("\n");
-//         lcd.setCursor(0, 0);
-//         lcd.print("LPG:");
-// lcd.print(MQGetGasPercentage(MQRead(MQ_PIN)/Ro,GAS_LPG) );
-// //lcd.print( "ppm" );
-// lcd.print("     ");  
-//   lcd.setCursor(9, 0);
-// lcd.print("CO:"); 
-// lcd.print(MQGetGasPercentage(MQRead(MQ_PIN)/Ro,GAS_CO) );
-// //lcd.print( "ppm" );
-// lcd.print("       "); 
-//  lcd.setCursor(0, 1);  
-// lcd.print("SMOKE:"); 
-// lcd.print(MQGetGasPercentage(MQRead(MQ_PIN)/Ro,GAS_SMOKE) );
-// //lcd.print( "ppm" );
-// lcd.print("         ");
-//    delay(200);
-    //lcd.clearDisplay();      
-    if(dataIndex >= DATA_LEN) return; //fuera de los limites
-    unsigned int _dataIndex = dataIndex;
+  if(dataIndex >= DATA_LEN) return; //fuera de los limites
+  unsigned int _dataIndex = dataIndex;  
+  float maxValue = -1;
+  float currentValue;
 
-    //sección superior iconos
-    lcd.fillRect(0, 0, 84, 6, BLACK);
-    
-    //
-    lcd.fillRect(0,6, _dataIndex * GRAPH_WIDTH,37, WHITE);
-    
-    for(unsigned int i = 1; i < DATA_LEN && i <= _dataIndex; i++)
-    {   
-        lcd.drawLine((i-1) * GRAPH_WIDTH, 6+(data[i-1]*42)/1024 , i * GRAPH_WIDTH, 6+(data[i]*42)/1024, BLACK);        
-    }    
-    lcd.drawLine(_dataIndex * GRAPH_WIDTH,  6, _dataIndex * GRAPH_WIDTH, 36, BLACK);
-    lcd.drawPixel(_dataIndex * GRAPH_WIDTH, 6+(data[_dataIndex]*42)/1024, WHITE);    
+  //sección superior iconos
+  lcd.fillRect(0, 0, 84, 6, BLACK);
+  
+  //limpiar la sección activa del grafico
+  lcd.fillRect(0,6, _dataIndex * GRAPH_WIDTH,37, WHITE);
 
-    
-    lcd.fillRect(0, 37, 84, 11, BLACK);
-    lcd.setTextColor(WHITE);
-    //lcd.setCursor(30,38);  //lcd.print("GHOST");
-    lcd.setTextColor(WHITE);
-    lcd.setCursor(0,38);  
-    lcd.print(MQGetPercentage(MQRead()/Ro, LPGCurve));
-    lcd.print(',');
-    lcd.print(MQGetPercentage(MQRead()/Ro, COCurve));
-    lcd.print(',');
-    lcd.print(MQGetPercentage(MQRead()/Ro, SmokeCurve));
-    
-    
-    lcd.display();
+  const float* gasCurve = nullptr;
+  switch(gasTypeSelected)
+  {
+    case GAS_LGP:
+      gasCurve = LPGCurve;      
+    break;
+    case GAS_CO:
+      gasCurve = COCurve;
+    break;
+    case GAS_SMOKE:
+      gasCurve = SmokeCurve;
+    break;
+    default:
+  }
+  //valor actual en ppm
+  currentValue =  MQGetPercentage(MQRead()/Ro, gasCurve);    
+
+  //valor maximo en ppm de los datos activos 
+  for(unsigned int i = 0; i < DATA_LEN && i <= _dataIndex; i++)
+  {
+      float value = MQGetPercentage(MQResistanceCalculation(data[i])/Ro, gasCurve);
+      if(value > maxValue)
+      {
+        maxValue = value;
+      }
+  }
+
+  //dibujar el grafico
+  for(unsigned int i = 1; i < DATA_LEN && i <= _dataIndex; i++)
+  {   
+      lcd.drawLine((i-1) * GRAPH_WIDTH, 6+(data[i-1]*42)/1024 , i * GRAPH_WIDTH, 6+(data[i]*42)/1024, BLACK);        
+  }    
+  lcd.drawLine(_dataIndex * GRAPH_WIDTH,  6, _dataIndex * GRAPH_WIDTH, 36, BLACK);
+  lcd.drawPixel(_dataIndex * GRAPH_WIDTH, 6+(data[_dataIndex]*42)/1024, WHITE);    
+  
+
+  
+  //sección inferior de descripción
+  lcd.fillRect(0, 37, 84, 11, BLACK);
+  lcd.setTextColor(WHITE);
+  //lcd.setCursor(30,38);  //lcd.print("GHOST");
+  lcd.setTextColor(WHITE);
+  lcd.setCursor(0,38);  
+  lcd.print(MQGetPercentage(MQRead()/Ro, LPGCurve));
+  lcd.print(',');
+  lcd.print(MQGetPercentage(MQRead()/Ro, COCurve));
+  lcd.print(',');
+  lcd.print(MQGetPercentage(MQRead()/Ro, SmokeCurve));
+  
+  
+  lcd.display();
 }
 void MainMenu::end()
 {
@@ -126,6 +129,17 @@ void MainMenu::end()
 
 void MainMenu::navSwitchClick(const NavKey key)
 {
+  switch (key)
+  {
+    case NavLeft:      
+        gasTypeSelected++;
+      break;
+    case NavRight:
+        gasTypeSelected--;
+      break;  
+    default:
+      break;
+  }
 }
 void MainMenu::navSwitchDoubleClick(const NavKey key)
 {
