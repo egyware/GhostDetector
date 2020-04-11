@@ -9,9 +9,12 @@
 #define DATA_LEN 16
 #define GRAPH_WIDTH 84/(DATA_LEN-1)
 
-#define         RL_VALUE                     (5)     //define the load resistance on the board, in kilo ohms
-#define         RO_CLEAN_AIR_FACTOR          (9.83)  //RO_CLEAR_AIR_FACTOR=(Sensor resistance in clean air)/RO,
-                                                     //which is derived from the chart in datasheet
+//define the load resistance on the board, in kilo ohms
+#define         RL_VALUE                     (5)
+//RO_CLEAR_AIR_FACTOR=(Sensor resistance in clean air)/RO,
+//which is derived from the chart in datasheet
+#define         RO_CLEAN_AIR_FACTOR          (9.83)  
+                                                     
 
 /**********************Software Related Macros***********************************/
 #define         CALIBARAION_SAMPLE_TIMES     (50)    //define how many samples you are going to take in the calibration phase
@@ -71,9 +74,9 @@ Remarks: By using the slope and a point of the line. The x(logarithmic value of 
          logarithmic coordinate, power of 10 is used to convert the result to non-logarithmic 
          value.
 **********************************************************************************/ 
-inline int MQGetPercentage(float rs_ro_ratio, const float *pcurve)
+inline float MQGetPercentage(float rs_ro_ratio, const float *pcurve)
 {
-  return (pow(10,( ((log(rs_ro_ratio)-pcurve[1])/pcurve[2]) + pcurve[0])));  
+  return (pow(10,( ((log10(rs_ro_ratio)-pcurve[1])/pcurve[2]) + pcurve[0])));  
 }
 
 
@@ -91,6 +94,13 @@ inline float MQRead()
   unsigned int _dataIndex = dataIndex;
   if(_dataIndex >= DATA_LEN) return -1; //fuera de los limites
   return MQResistanceCalculation(data[_dataIndex]);  
+}
+
+inline float MQRead(int index)
+{
+  //ahora solo devuelve el valor inmediato, no el promedio  
+  if(index >= DATA_LEN) return -1; //fuera de los limites
+  return MQResistanceCalculation(data[index]);  
 }
 
 #endif

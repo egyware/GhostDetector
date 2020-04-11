@@ -1,18 +1,23 @@
 #ifndef __EXPLORER_MENU_H__
 #define __EXPLORER_MENU_H__
 
-#include "Menu.h"
+#include "NavMenu.h"
 
-class ExplorerMenu: public Menu
+class ExplorerMenu: public NavMenu
 {
     public:
+        ExplorerMenu();
+
         void init();
         void run();
         void end();
 
-        void navSwitchClick(const NavKey);
-        void navSwitchDoubleClick(const NavKey);
-        void navSwitchLongPress(const NavKey);
+        void _okPress();
+        void _leftPress();
+        void _rightPress();   
+
+        static void   okAction(void *arg);
+        static void backAction(void *arg);
 };
 
 #endif

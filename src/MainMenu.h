@@ -5,6 +5,9 @@
 
 class MainMenu: public Menu
 {
+    private:
+        unsigned int selectedGasItem;
+        bool refreshGraph;
     public:
         void navSwitchClick(const NavKey key);
         void navSwitchDoubleClick(const NavKey key);
