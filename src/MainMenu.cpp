@@ -4,6 +4,9 @@
 #include "main.h"
 #include "PIN.h"
 
+//definicion de las funciones que transforman el valor leido a ppm
+typedef float (*Vista)(unsigned int index);
+
 /*************************** MQCalibration **************************************
 Input:   mq_pin - analog channel
 Output:  Ro of the sensor
@@ -54,6 +57,42 @@ void MainMenu::init()
     lcd.clearDisplay();
     Ro = MQCalibration(A3);      
 }
+
+float lpg(unsigned int index)
+{
+    return MQGetPercentage(MQRead(index)/Ro, LPGCurve);
+}
+
+float co(unsigned int index)
+{
+  return MQGetPercentage(MQRead(index)/Ro, COCurve);
+}
+
+float smoke(unsigned int index)
+{
+  return MQGetPercentage(MQRead(index)/Ro, SmokeCurve);
+}
+
+float rs(unsigned int index)
+{
+  return MQRead(index);
+}
+
+float ro(unsigned int index)
+{
+  return Ro;
+}
+
+float ratio(unsigned int index)
+{
+  return MQRead(index)/Ro;
+}
+
+float raw(unsigned int index)
+{
+  return data[index];
+}
+
 void MainMenu::run()
 {       
     if(dataIndex >= DATA_LEN) return; //fuera de los limites
@@ -70,44 +109,60 @@ void MainMenu::run()
       lcd.fillRect(0,0, _dataIndex * GRAPH_WIDTH,37, WHITE);
     }
     
-    float anteriorValor, valor;
     //100.000 ppm puede medir el sensor
-    float maximoValor = 100000;
+    Vista v = nullptr;
     switch(selectedGasItem)
     {
-         case 0: //gas lpg
-          valor = MQGetPercentage(MQRead()/Ro, LPGCurve);          
+        case 0: //gas lpg    
+          v = &lpg;
         break;
-        case 1: //CO
-          valor = MQGetPercentage(MQRead()/Ro, COCurve);          
+        case 1: //CO          
+          v = &co;         
         break;
-        case 2: //HUMO
-          valor = MQGetPercentage(MQRead()/Ro, SmokeCurve);          
+        case 2: //HUMO          
+          v = &smoke;
         break;
-        case 3: //Rs
-          valor = MQRead();
-          maximoValor = 100; //maximo kOhm??
+        case 3: //Rs          
+          v = &rs;
           break;
-        case 4: //Ro
-          valor = Ro;    
-          anteriorValor = Ro;
-          maximoValor = 10; //maximo valor 10kOhm
+        case 4: //Ro          
+          v = &ro;
         break;    
-        case 5: //Relación
-          valor = MQRead()/Ro;
-          maximoValor = 10;
+        case 5: //Relación          
+          v = &ratio;
+        break;
+        case 6:
+          v = &raw;
         break;
     }
     
-    //dibujar el grafico
+    //buscar el maximo valor
+    float maximoValor = 0;
+    for(unsigned int i = 1; i < DATA_LEN; i++)
+    {
+      float testValor = v(i);
+      if(testValor > maximoValor) maximoValor = testValor;      
+    }
+    //si el maximoValor es menor a 100000 ppm entonces multiplicar por 1.5
+    if(maximoValor < 100000) 
+      maximoValor *= 1.5; // para que nunca llegue a la parte de arriba de la pantalla
+    maximoValor = ceil(maximoValor);
+
+    //dibujar el grafico          
     for(unsigned int i = 1; i < DATA_LEN && i <= _dataIndex; i++)
-    {   
-        lcd.drawLine((i-1) * GRAPH_WIDTH, 47-(int)((data[i-1]*47)/maximoValor), i * GRAPH_WIDTH, 47-(int)((data[i]*47)/maximoValor), BLACK);        
+    {       
+       lcd.drawLine((i-1) * GRAPH_WIDTH, 47-(int)((v(i-1)*47)/maximoValor), i * GRAPH_WIDTH, 47-(int)((v(i)*47)/maximoValor), BLACK);
     }    
     
     lcd.drawLine(_dataIndex * GRAPH_WIDTH, 0, _dataIndex * GRAPH_WIDTH, 36, BLACK);
-    lcd.drawPixel(_dataIndex * GRAPH_WIDTH, 47-(int)((data[_dataIndex]*47)/maximoValor), WHITE);    
+    lcd.drawPixel(_dataIndex * GRAPH_WIDTH, 47-(int)((v(_dataIndex)*47)/maximoValor), WHITE);    
 
+
+    float valor = v(_dataIndex);    
+    lcd.setTextColor(BLACK);
+    lcd.setCursor(0, 0);    
+    lcd.print(maximoValor);
+    
     //cuadrado de abajo contendrá las lecturas de las concentraciones
     lcd.fillRect(0, 37, 84, 11, BLACK);
     
@@ -117,26 +172,18 @@ void MainMenu::run()
     //                      2: Humo: Humoppm MQRead()/Ro
     //                      3: Raw : MQRead() MQRead()/Ro
     //                      4:   Ro: Ro
-
-    lcd.setCursor(1,10);  
-    lcd.setTextColor(BLACK);
-    lcd.print(valor);
-    lcd.print(",");
-    lcd.print(maximoValor);
-    lcd.print(",");
-    lcd.print((valor*48)/maximoValor);
-
+    
     lcd.setTextColor(WHITE);
     lcd.setCursor(1,39);  
     switch(selectedGasItem)
     {
         case 0: //gas lpg
-          lcd.print("LPG: ");
+          lcd.print("LPG:");
           lcd.print(valor);
           lcd.print("ppm");          
         break;
         case 1: //CO
-          lcd.print("CO:  ");
+          lcd.print("CO:");
           lcd.print(valor);
           lcd.print("ppm");          
         break;
@@ -152,12 +199,16 @@ void MainMenu::run()
           break;
         case 4: //Ro
           lcd.print("Ro:");
-          lcd.print(Ro);
+          lcd.print(valor);
           lcd.print("kOhm");          
         break;    
         case 5: //Relación
           lcd.print("Rs/Ro:");
-          lcd.print(MQRead()/Ro);                  
+          lcd.print(valor);                  
+        break;
+        case 6: //Raw
+          lcd.print("Raw:");
+          lcd.print(valor);                  
         break;
         
     }   
@@ -175,11 +226,11 @@ void MainMenu::navSwitchClick(const NavKey key)
    switch(key)
    {
       case NavKey::NavLeft:
-        selectedGasItem = (selectedGasItem == 0)?5: selectedGasItem-1;
+        selectedGasItem = (selectedGasItem == 0)?6: selectedGasItem-1;
         refreshGraph = true;
       break;
       case NavKey::NavRight:
-        selectedGasItem = (selectedGasItem + 1) % 6;
+        selectedGasItem = (selectedGasItem + 1) % 7;
         refreshGraph = true;
       break;
       case NavKey::NavOk:
