@@ -55,7 +55,10 @@ void MainMenu::init()
 {
     done = false;
     lcd.clearDisplay();
-    Ro = MQCalibration(A3);      
+    Ro = MQCalibration(A3);  
+
+    pinMode(LEFT_DOTMODE,  INPUT); 
+    pinMode(RIGHT_DOTMODE, INPUT); 
 }
 
 float lpg(unsigned int index)
