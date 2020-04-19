@@ -57,8 +57,8 @@ void MainMenu::init()
     lcd.clearDisplay();
     Ro = MQCalibration(A3);  
 
-    pinMode(LEFT_DOTMODE,  INPUT); 
-    pinMode(RIGHT_DOTMODE, INPUT); 
+    pinMode(LEFT_DOTMODE, OUTPUT); digitalWrite(LEFT_DOTMODE, HIGH);
+    pinMode(RIGHT_DOTMODE, OUTPUT); digitalWrite(RIGHT_DOTMODE, HIGH);
 }
 
 float lpg(unsigned int index)
@@ -214,9 +214,12 @@ void MainMenu::run()
           lcd.print(valor);                  
         break;
         
-    }   
-    
+    }       
     lcd.display();
+    
+    //leds
+    analogWrite(RIGHT_BAR, ledValues[(int)((valor*10)/maximoValor)]);
+    analogWrite(LEFT_BAR,  ledValues[(int)((valor*10)/maximoValor)]);  
 }
 void MainMenu::end()
 {
